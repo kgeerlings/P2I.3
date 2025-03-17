@@ -28,10 +28,13 @@ def load_data():
 
 def load_data_emnist(data_dir='./data/gzip'):
     """Charge et retourne les données EMNIST normalisées"""
-    train_images_path = os.path.join(data_dir, 'emnist-letters-train-images-idx3-ubyte.gz')
-    train_labels_path = os.path.join(data_dir, 'emnist-letters-train-labels-idx1-ubyte.gz')
-    test_images_path = os.path.join(data_dir, 'emnist-letters-test-images-idx3-ubyte.gz')
-    test_labels_path = os.path.join(data_dir, 'emnist-letters-test-labels-idx1-ubyte.gz')
+    #balanced: 47 classes (m&M confondus, jeu de données équilibrés)
+    #bymerge: 47 classes (m&M confondus)
+    #byclass: 62 classes (tout classer)
+    train_images_path = os.path.join(data_dir, 'emnist-balanced-train-images-idx3-ubyte.gz')
+    train_labels_path = os.path.join(data_dir, 'emnist-balanced-train-labels-idx1-ubyte.gz')
+    test_images_path = os.path.join(data_dir, 'emnist-balanced-test-images-idx3-ubyte.gz')
+    test_labels_path = os.path.join(data_dir, 'emnist-balanced-test-labels-idx1-ubyte.gz')
     
     with gzip.open(train_images_path, 'rb') as f:
         x_train = np.frombuffer(f.read(), np.uint8, offset=16).reshape(-1, 28, 28, 1)
@@ -44,12 +47,8 @@ def load_data_emnist(data_dir='./data/gzip'):
     
     print(f"x_test shape: {x_test.shape}")  # Devrait être (N, 28, 28, 1)
     print(f"y_test shape: {y_test.shape}") 
-    # Créer des copies modifiables des tableaux
-    y_train = y_train.copy()  # Copie modifiable
-    y_test = y_test.copy()    # Copie modifiable
 
-    # Correction : ajuster les labels pour qu'ils soient dans la plage [0, 25]
-    y_train -= 1
-    y_test -= 1
+
 
     return (x_train / 255.0, x_test / 255.0, y_train, y_test)
+

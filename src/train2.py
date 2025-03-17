@@ -1,5 +1,4 @@
 import os
-import gzip
 import numpy as np
 import tensorflow as tf
 from tensorflow import keras
@@ -7,41 +6,13 @@ from tensorflow.keras import layers
 import seaborn as sns
 from sklearn.metrics import confusion_matrix
 import matplotlib.pyplot as plt
+from data_loader import load_data_emnist
+from models import build_model_emnist
 
-def load_data(data_dir='./data/gzip'):
-    """Charge et retourne les données EMNIST normalisées"""
-    train_images_path = os.path.join(data_dir, 'emnist-balanced-train-images-idx3-ubyte.gz')
-    train_labels_path = os.path.join(data_dir, 'emnist-balanced-train-labels-idx1-ubyte.gz')
-    test_images_path = os.path.join(data_dir, 'emnist-balanced-test-images-idx3-ubyte.gz')
-    test_labels_path = os.path.join(data_dir, 'emnist-balanced-test-labels-idx1-ubyte.gz')
-
-    with gzip.open(train_images_path, 'rb') as f:
-        x_train = np.frombuffer(f.read(), np.uint8, offset=16).reshape(-1, 28, 28, 1)
-    with gzip.open(train_labels_path, 'rb') as f:
-        y_train = np.frombuffer(f.read(), np.uint8, offset=8)
-    with gzip.open(test_images_path, 'rb') as f:
-        x_test = np.frombuffer(f.read(), np.uint8, offset=16).reshape(-1, 28, 28, 1)
-    with gzip.open(test_labels_path, 'rb') as f:
-        y_test = np.frombuffer(f.read(), np.uint8, offset=8)
-
-    return (x_train / 255.0, x_test / 255.0, y_train, y_test)
-
-def build_model():
-    """Construit et retourne un modèle CNN pour EMNIST"""
-    model = keras.models.Sequential([
-        layers.Conv2D(32, (3,3), activation='relu', input_shape=(28,28,1)),
-        layers.MaxPooling2D((2,2)),
-        layers.Conv2D(64, (3,3), activation='relu'),
-        layers.MaxPooling2D((2,2)),
-        layers.Flatten(),
-        layers.Dense(128, activation='relu'),
-        layers.Dense(47, activation='softmax')  # 47 classes pour EMNIST Balanced
-    ])
-    return model
 
 def train2_model():
     """Entraîne le modèle sur EMNIST et sauvegarde les résultats"""
-    x_train, x_test, y_train, y_test = load_data()
+    x_train, x_test, y_train, y_test = load_data_emnist()
 
     import random
 
@@ -52,7 +23,7 @@ def train2_model():
         plt.title(f"Label attendu: {y_train[index]}")
         plt.show()
 
-    model = build_model()
+    model = build_model_emnist()
     model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
     history = model.fit(x_train, y_train, epochs=20, batch_size=64, validation_data=(x_test, y_test))
     
@@ -60,9 +31,12 @@ def train2_model():
     model.save("models/emnist_model.h5")
 
     # Affichage et sauvegarde des résultats
-    plot_training_history(history)
     plot_confusion_matrices(model, x_test, y_test)
 
+
+
+
+#création des matrices de confusion
 def plot_confusion_matrices(model, x_test, y_test):
     """Affiche et sauvegarde les matrices de confusion pour lettres et chiffres"""
     y_pred = np.argmax(model.predict(x_test), axis=1)
@@ -95,33 +69,19 @@ def plot_confusion_matrices(model, x_test, y_test):
 
     # Matrice de confusion pour les lettres
     plt.figure(figsize=(8, 6))
-    sns.heatmap(cm_letters, annot=True, fmt='d', cmap='Greens', xticklabels=labels_letters, yticklabels=labels_letters, square=True)
-    plt.xlabel("Prédictions")
-    plt.ylabel("Vraies classes")
-    plt.title("Matrice de confusion - Lettres")
-    plt.savefig("models/confusion_matrix_letters.png")
-    plt.show()
-
-def plot_training_history(history):
-    """Affiche et sauvegarde les courbes de perte et d'exactitude"""
-    plt.figure(figsize=(12, 5))
+    sns.heatmap(cm_letters, annot=True, fmt='d', cmap='Greens', 
+            xticklabels=labels_letters, yticklabels=labels_letters, 
+            square=True, cbar=True, linewidths=0.8, linecolor='black',
+            annot_kws={"size": 14})  # Augmenter la taille des annotations
     
-    # Courbe de perte
-    plt.subplot(1, 2, 1)
-    plt.plot(history.history['loss'], label='Perte entraînement')
-    plt.plot(history.history['val_loss'], label='Perte validation')
-    plt.xlabel('Époques')
-    plt.ylabel('Perte')
-    plt.legend()
+   # Ajout des labels et du titre
+    plt.xlabel("Prédictions", fontsize=14)
+    plt.ylabel("Vraies classes", fontsize=14)
+    plt.title("Matrice de confusion - Lettres", fontsize=16)
+    plt.xticks(rotation=45, fontsize=12)
+    plt.yticks(rotation=45, fontsize=12)
 
-    # Courbe d'exactitude
-    plt.subplot(1, 2, 2)
-    plt.plot(history.history['accuracy'], label='Exactitude entraînement')
-    plt.plot(history.history['val_accuracy'], label='Exactitude validation')
-    plt.xlabel('Époques')
-    plt.ylabel('Exactitude')
-    plt.legend()
-
-    plt.tight_layout()
-    plt.savefig("models/training_history.png")
+    # Sauvegarde et affichage
+    plt.savefig("models/confusion_matrix_letters.png", bbox_inches='tight', dpi=300)
     plt.show()
+
