@@ -71,8 +71,7 @@ def plot_confusion_matrices(model, x_test, y_test):
     plt.figure(figsize=(8, 6))
     sns.heatmap(cm_letters, annot=True, fmt='d', cmap='Greens', 
             xticklabels=labels_letters, yticklabels=labels_letters, 
-            square=True, cbar=True, linewidths=0.8, linecolor='black',
-            annot_kws={"size": 14})  # Augmenter la taille des annotations
+            square=True, cbar=True, linewidths=0.8, linecolor='black')
     
    # Ajout des labels et du titre
     plt.xlabel("Prédictions", fontsize=14)

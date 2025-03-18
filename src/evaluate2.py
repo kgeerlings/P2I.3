@@ -102,16 +102,38 @@ def plot_confusion_matrices(model, x_test, y_test):
 
     # Labels pour affichage
     labels_letters = [chr(i) for i in range(ord('A'), ord('Z') + 1)]
+    labels_digits = [str(i) for i in range(10)]  # Chiffres 0-9
+    labels_full = labels_digits + labels_letters  # Chiffres et lettres
 
     # Matrice de confusion pour les lettres (valeurs entre 0 et 25)
     cm_letters = confusion_matrix(y_test, y_pred)
+    cm_full = confusion_matrix(y_test, y_pred)
+    cm_digits = cm_full[:10, :10]  # Extraire uniquement la partie des chiffres
 
     plt.figure(figsize=(8, 6))
     sns.heatmap(cm_letters, annot=True, fmt='d', cmap='Purples', xticklabels=labels_letters, yticklabels=labels_letters, square=True)
     plt.xlabel("Prédictions")
     plt.ylabel("Vraies classes")
     plt.title("Matrice de confusion - Lettres")
-    plt.savefig("models/confusion_matrix_letters.png")
+    plt.savefig("models/confusion_matrix_letters_evaluate.png")
+    plt.show()
+
+#matrice pour les chiffres
+    plt.figure(figsize=(6, 5))
+    sns.heatmap(cm_digits, annot=True, fmt='d', cmap='Blues', xticklabels=labels_digits, yticklabels=labels_digits, square=True)
+    plt.xlabel("Prédictions")
+    plt.ylabel("Vraies classes")
+    plt.title("Matrice de confusion - Chiffres")
+    plt.savefig("models/confusion_matrix_digits_evaluate.png")
+    plt.show()
+
+    # Matrice de confusion complète
+    plt.figure(figsize=(8, 6))
+    sns.heatmap(cm_full, annot=False, fmt='d', cmap='Purples', xticklabels=labels_full, yticklabels=labels_full, square=True)
+    plt.xlabel("Prédictions")
+    plt.ylabel("Vraies classes")
+    plt.title("Matrice de confusion - Ensemble complet")
+    plt.savefig("models/confusion_matrix_full_evaluate.png")
     plt.show()
 
 if __name__ == '__main__':
