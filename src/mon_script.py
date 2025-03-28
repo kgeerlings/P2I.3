@@ -2,7 +2,7 @@ import sys
 import tensorflow as tf
 import numpy as np
 from PyQt6.QtWidgets import QApplication
-from mon_appli import Ui_Dialog
+from interface_ui import Ui_MainWindow
 from recognition_app import RecognitionApp  # Classe de l'interface
 from data_loader import load_data_emnist
 
