@@ -61,39 +61,39 @@ def evaluate2_model():
     plot_confusion_matrices(model, x_test, y_test)
 
     # Afficher les courbes de perte et précision
-    plot_training_history(model)
+    #plot_training_history(model)
 
-def plot_training_history(model):
-    """Affiche les courbes de perte et précision pour l'entraînement et la validation"""
-    # Charger les données
-    x_train, x_test, y_train, y_test = load_data_emnist()
+# def plot_training_history(model):
+#     """Affiche les courbes de perte et précision pour l'entraînement et la validation"""
+#     # Charger les données
+#     x_train, x_test, y_train, y_test = load_data_emnist()
 
-    # Compiler le modèle si nécessaire
-    model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+#     # Compiler le modèle si nécessaire
+#     model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
 
-    # Tracer la courbe de perte
-    plt.figure(figsize=(12, 6))
+#     # Tracer la courbe de perte
+#     plt.figure(figsize=(12, 6))
 
-    plt.subplot(1, 2, 1)
-    plt.plot(history.history['loss'], label='Perte (Entraînement)', color='blue')
-    plt.plot(history.history['val_loss'], label='Perte (Validation)', color='red')
-    plt.title('Courbe de Perte')
-    plt.xlabel('Epochs')
-    plt.ylabel('Perte')
-    plt.legend()
+#     plt.subplot(1, 2, 1)
+#     plt.plot(history.history['loss'], label='Perte (Entraînement)', color='blue')
+#     plt.plot(history.history['val_loss'], label='Perte (Validation)', color='red')
+#     plt.title('Courbe de Perte')
+#     plt.xlabel('Epochs')
+#     plt.ylabel('Perte')
+#     plt.legend()
 
-    # Tracer la courbe de précision
-    plt.subplot(1, 2, 2)
-    plt.plot(history.history['accuracy'], label='Précision (Entraînement)', color='blue')
-    plt.plot(history.history['val_accuracy'], label='Précision (Validation)', color='red')
-    plt.title('Courbe de Précision')
-    plt.xlabel('Epochs')
-    plt.ylabel('Précision')
-    plt.legend()
+#     # Tracer la courbe de précision
+#     plt.subplot(1, 2, 2)
+#     plt.plot(history.history['accuracy'], label='Précision (Entraînement)', color='blue')
+#     plt.plot(history.history['val_accuracy'], label='Précision (Validation)', color='red')
+#     plt.title('Courbe de Précision')
+#     plt.xlabel('Epochs')
+#     plt.ylabel('Précision')
+#     plt.legend()
 
-    # Afficher les courbes
-    plt.tight_layout()
-    plt.show()
+#     # Afficher les courbes
+#     plt.tight_layout()
+#     plt.show()
 
 # Fonction pour afficher les matrices de confusion
 def plot_confusion_matrices(model, x_test, y_test):

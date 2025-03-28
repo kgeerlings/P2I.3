@@ -5,7 +5,7 @@ from mon_dessin import DrawingCanvas  # Assurez-vous que cette classe existe
 class RecognitionApp(QMainWindow):
     def __init__(self, model):
         super().__init__()
-        self.ui = Ui_MainWindow()
+        self.ui = QMainWindow()
         self.ui.setupUi(self)
         self.model = model  
 
