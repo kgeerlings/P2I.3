@@ -32,7 +32,7 @@ def train2_model():
 
     # Affichage et sauvegarde des résultats
     plot_confusion_matrices(model, x_test, y_test)
-
+    plot_training_history_emnist(history)
 
 
 
@@ -50,11 +50,22 @@ def plot_confusion_matrices(model, x_test, y_test):
     cm_letters = cm_full[10:, 10:]  # Extraire uniquement la partie des lettres
 
     # Matrice de confusion complète
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+
     plt.figure(figsize=(8, 6))
-    sns.heatmap(cm_full, annot=False, fmt='d', cmap='Purples', xticklabels=labels_full, yticklabels=labels_full, square=True)
+    ax = sns.heatmap(cm_full, annot=False, fmt='d', cmap='Purples', xticklabels=labels_full, yticklabels=labels_full, square=True)
+
+# Alignement des ticks au centre des carrés
+    ax.set_xticks([i + 0.5 for i in range(len(labels_full))])
+    ax.set_yticks([i + 0.5 for i in range(len(labels_full))])
+    ax.set_xticklabels(labels_full, rotation=45, ha='right')  # Rotation pour lisibilité
+    ax.set_yticklabels(labels_full, rotation=0, va='center')
+
     plt.xlabel("Prédictions")
     plt.ylabel("Vraies classes")
     plt.title("Matrice de confusion - Ensemble complet")
+
     plt.savefig("models/confusion_matrix_full.png")
     plt.show()
 
@@ -84,3 +95,32 @@ def plot_confusion_matrices(model, x_test, y_test):
     plt.savefig("models/confusion_matrix_letters.png", bbox_inches='tight', dpi=300)
     plt.show()
 
+
+def plot_training_history_emnist(history):
+    """ Affiche les courbes de perte et d'exactitude pendant l'entraînement """
+    
+    # Historique de la perte et de l'exactitude
+    plt.figure(figsize=(12, 5))
+
+    # Courbe de perte
+    plt.subplot(1, 2, 1)
+    plt.plot(history.history['loss'], label='Perte d\'entraînement')
+    plt.plot(history.history['val_loss'], label='Perte de validation')
+    plt.title('Perte d\'entraînement vs validation')
+    plt.xlabel('Époques')
+    plt.ylabel('Perte')
+    plt.legend()
+
+    # Courbe d'exactitude
+    plt.subplot(1, 2, 2)
+    plt.plot(history.history['accuracy'], label='Exactitude d\'entraînement')
+    plt.plot(history.history['val_accuracy'], label='Exactitude de validation')
+    plt.title('Exactitude d\'entraînement vs validation')
+    plt.xlabel('Époques')
+    plt.ylabel('Exactitude')
+    plt.legend()
+
+    # Affichage des courbes
+    plt.tight_layout()
+    plt.savefig('models/training_history_emnist.png')
+    plt.show()

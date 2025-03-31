@@ -47,7 +47,7 @@ def plot_confusion_matrix(model, x_test, y_test):
     plt.xlabel("Prédictions")
     plt.ylabel("Vraies classes")
     plt.title("Matrice de confusion")
-    plt.savefig('models/confusion_matrix.png')
+    plt.savefig('models/confusion_matrix_mnist.png')
     plt.show()
 
 def plot_training_history(history):
@@ -76,5 +76,5 @@ def plot_training_history(history):
 
     # Affichage des courbes
     plt.tight_layout()
-    plt.savefig('models/training_history.png')
+    plt.savefig('models/training_history_mnist.png')
     plt.show()

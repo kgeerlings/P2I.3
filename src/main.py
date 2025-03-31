@@ -2,6 +2,8 @@
 #from evaluate import evaluate_model
 from evaluate2 import evaluate2_model
 from train2 import train2_model
+from train import train_model
+from evaluate import evaluate_model
 
 if __name__ == '__main__':
     print()
