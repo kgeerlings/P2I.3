@@ -1,7 +1,7 @@
 import sys
 import numpy as np
 from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QLabel, QFileDialog, QGraphicsView, QGraphicsScene, QGraphicsPixmapItem
-from PyQt5.QtGui import QPixmap, QImage
+from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.image import img_to_array
@@ -44,13 +44,16 @@ class ImageClassifier(QMainWindow):
             self.predict_image(file_path)
 
     def predict_image(self, file_path):
+        # Charger l'image et la prétraiter
         image = Image.open(file_path).convert("L").resize((28, 28))  # Conversion en niveaux de gris (MNIST-like)
         image = img_to_array(image) / 255.0  # Normalisation
         image = np.expand_dims(image, axis=0)  # Ajouter batch dimension
 
+        # Effectuer la prédiction
         prediction = self.model.predict(image)
-        predicted_label = np.argmax(prediction)
+        predicted_label = np.argmax(prediction, axis=1)[0]  # Classe prédite (avec la plus grande probabilité)
         
+        # Afficher la prédiction
         self.label.setText(f"Prédiction : {predicted_label}")
 
 if __name__ == "__main__":
