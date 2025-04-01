@@ -66,7 +66,7 @@ def plot_confusion_matrices(model, x_test, y_test):
     plt.ylabel("Vraies classes")
     plt.title("Matrice de confusion - Ensemble complet")
 
-    plt.savefig("models/confusion_matrix_full.png")
+    plt.savefig("models/emnist/confusion_matrix_full.png")
     plt.show()
 
     # Matrice de confusion pour les chiffres
@@ -75,7 +75,7 @@ def plot_confusion_matrices(model, x_test, y_test):
     plt.xlabel("Prédictions")
     plt.ylabel("Vraies classes")
     plt.title("Matrice de confusion - Chiffres")
-    plt.savefig("models/confusion_matrix_digits.png")
+    plt.savefig("models/emnist/confusion_matrix_digits.png")
     plt.show()
 
     # Matrice de confusion pour les lettres
@@ -92,7 +92,7 @@ def plot_confusion_matrices(model, x_test, y_test):
     plt.yticks(rotation=45, fontsize=12)
 
     # Sauvegarde et affichage
-    plt.savefig("models/confusion_matrix_letters.png", bbox_inches='tight', dpi=300)
+    plt.savefig("models/emnist/confusion_matrix_letters.png", bbox_inches='tight', dpi=300)
     plt.show()
 
 
@@ -122,5 +122,5 @@ def plot_training_history_emnist(history):
 
     # Affichage des courbes
     plt.tight_layout()
-    plt.savefig('models/training_history_emnist.png')
+    plt.savefig('models/emnist/training_history_emnist.png')
     plt.show()
