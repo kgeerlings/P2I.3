@@ -18,6 +18,8 @@ def build_model_emnist():
     model = keras.models.Sequential([
         layers.Conv2D(32, (3,3), activation='relu', kernel_regularizer=regularizers.l2(0.02), input_shape=(28,28,1)),
         layers.MaxPooling2D((2,2)),
+        layers.Dropout(0.2),  # Pour éviter l'overfitting
+
         layers.Conv2D(64, (3,3), activation='relu', kernel_regularizer=regularizers.l2(0.02)),
         layers.MaxPooling2D((2,2)),
         layers.Flatten(),

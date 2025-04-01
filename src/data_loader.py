@@ -1,9 +1,8 @@
-import tensorflow as tf
 import os
 import gzip
-from sklearn.model_selection import train_test_split
 import numpy as np
-
+from tensorflow.keras.utils import to_categorical
+from PIL import Image
 
 def load_data():
     # Charger le dataset MNIST (chiffres)
@@ -26,16 +25,23 @@ def load_data():
     return x_train, x_test, y_train, y_test
 
 
+
+
 def load_data_emnist(data_dir='./data/gzip'):
-    """Charge et retourne les données EMNIST normalisées"""
-    #balanced: 47 classes (m&M confondus, jeu de données équilibrés)
-    #bymerge: 47 classes (m&M confondus)
-    #byclass: 62 classes (tout classer)
+    """Charge et retourne les données EMNIST normalisées avec correction d'orientation"""
+
+    # Chemins des fichiers
     train_images_path = os.path.join(data_dir, 'emnist-balanced-train-images-idx3-ubyte.gz')
     train_labels_path = os.path.join(data_dir, 'emnist-balanced-train-labels-idx1-ubyte.gz')
     test_images_path = os.path.join(data_dir, 'emnist-balanced-test-images-idx3-ubyte.gz')
     test_labels_path = os.path.join(data_dir, 'emnist-balanced-test-labels-idx1-ubyte.gz')
-    
+
+    # Vérification des fichiers
+    for path in [train_images_path, train_labels_path, test_images_path, test_labels_path]:
+        if not os.path.exists(path):
+            raise FileNotFoundError(f"Le fichier {path} est introuvable. Vérifie le chemin !")
+
+    # Chargement des images
     with gzip.open(train_images_path, 'rb') as f:
         x_train = np.frombuffer(f.read(), np.uint8, offset=16).reshape(-1, 28, 28, 1)
     with gzip.open(train_labels_path, 'rb') as f:
@@ -44,11 +50,21 @@ def load_data_emnist(data_dir='./data/gzip'):
         x_test = np.frombuffer(f.read(), np.uint8, offset=16).reshape(-1, 28, 28, 1)
     with gzip.open(test_labels_path, 'rb') as f:
         y_test = np.frombuffer(f.read(), np.uint8, offset=8)
-    
-    print(f"x_test shape: {x_test.shape}")  # Devrait être (N, 28, 28, 1)
-    print(f"y_test shape: {y_test.shape}") 
 
+    # Correction d'orientation (les images sont mal tournées dans EMNIST)
+    x_train = np.rot90(x_train, k=-1, axes=(1, 2))  # Rotation pour être aligné avec MNIST
+    x_test = np.rot90(x_test, k=-1, axes=(1, 2))
 
+    # Normalisation des images (valeurs entre 0 et 1)
+    x_train = x_train.astype('float32') / 255.0
+    x_test = x_test.astype('float32') / 255.0
 
-    return (x_train / 255.0, x_test / 255.0, y_train, y_test)
+    # Debugging
+    print(f"x_train shape: {x_train.shape}")  # (N, 28, 28, 1)
+    print(f"x_test shape: {x_test.shape}")    # (N, 28, 28, 1)
+    print(f"y_train shape: {y_train.shape}") # (N, 47)
+    print(f"y_test shape: {y_test.shape}")   # (N, 47)
+
+    return x_train, x_test, y_train, y_test
+
 
