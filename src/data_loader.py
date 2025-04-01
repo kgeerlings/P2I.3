@@ -3,6 +3,7 @@ import gzip
 import numpy as np
 from tensorflow.keras.utils import to_categorical
 from PIL import Image
+import matplotlib.pyplot as plt
 
 def load_data():
     # Charger le dataset MNIST (chiffres)
@@ -52,12 +53,39 @@ def load_data_emnist(data_dir='./data/gzip'):
         y_test = np.frombuffer(f.read(), np.uint8, offset=8)
 
     # Correction d'orientation (les images sont mal tournées dans EMNIST)
-    x_train = np.rot90(x_train, k=-1, axes=(1, 2))  # Rotation pour être aligné avec MNIST
-    x_test = np.rot90(x_test, k=-1, axes=(1, 2))
+    x_test = np.fliplr(x_test)
+    x_train = np.fliplr(x_train)
+
+    # rotation de 90 degrés dans le sens des aiguilles d'une montre
+    x_train = np.rot90(x_train, k=-1, axes=(1, 2))  # Rotation pour x_train
+    x_test = np.rot90(x_test, k=-1, axes=(1, 2))    # Rotation pour x_test
+
+
 
     # Normalisation des images (valeurs entre 0 et 1)
     x_train = x_train.astype('float32') / 255.0
     x_test = x_test.astype('float32') / 255.0
+
+    emnist_classes = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabdefghnqrt"
+
+    # debug orientation des images
+    """ plt.figure(figsize=(12, 3))
+    
+    for i in range(10):
+        plt.subplot(1, 10, i+1)
+        plt.imshow(x_test[i], cmap='gray')
+        plt.title(f"Label: {emnist_classes[y_test[i]]}")
+        plt.axis('off')
+
+    plt.show()
+
+    for i in range(10):
+        plt.subplot(1, 10, i+1)
+        plt.imshow(x_train[i], cmap='gray')
+        plt.title(f"Label: {emnist_classes[y_train[i]]}"+"   ")
+        plt.axis('off')
+
+    plt.show() """
 
     # Debugging
     print(f"x_train shape: {x_train.shape}")  # (N, 28, 28, 1)

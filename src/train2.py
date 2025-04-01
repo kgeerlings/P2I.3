@@ -12,7 +12,7 @@ def train2_model():
 
     # Vérifier plusieurs images et leurs labels
     for i in range(5):
-        index = random.randint(0, len(x_test) - 1)
+        index = random.randint(0, len(x_train) - 1)
         plt.imshow(x_train[index].squeeze(), cmap="gray")
         plt.title(f"Label attendu: {y_train[index]}")
         plt.show()

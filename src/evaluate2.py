@@ -1,61 +1,88 @@
 import numpy as np
 import tensorflow as tf
-import seaborn as sns
-from sklearn.metrics import confusion_matrix
 import matplotlib.pyplot as plt
+import random
+
 from data_loader import load_data_emnist
-from matrix import plot_confusion_matrices
-from training_history import plot_training_history_emnist
 
 def evaluate2_model():
     """Évalue le modèle et affiche les résultats"""
     # Charger les données
     x_train, x_test, y_train, y_test = load_data_emnist()
 
-    #verification des données
-    print(f"Taille x_test: {x_test.shape}, y_test: {y_test.shape}")
-    print(f"Valeurs uniques y_test: {np.unique(y_test)}")
+    # Mapping des labels EMNIST Balanced
+    labels_mapping = [
+        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',  # Chiffres
+        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',  # Lettres majuscules
+        'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v'  # Lettres minuscules
+    ]
 
-    plt.imshow(x_test[0].squeeze(), cmap="gray")
-    plt.title(f"Label attendu: {y_test[0]}")
-    plt.show()
-
-    plt.imshow(x_train[0].squeeze(), cmap="gray")
-    plt.title(f"Label attendu (train): {y_train[0]}")
-    plt.show()
-
-    # Vérifier le nombre d'éléments
+    # Vérification des dimensions des données
     print(f"x_train: {x_train.shape}, y_train: {y_train.shape}")
     print(f"x_test: {x_test.shape}, y_test: {y_test.shape}")
+    print(f"Valeurs uniques y_test: {np.unique(y_test)}")
 
-    # Vérifier si les labels sont bien répartis
-    print("Labels train uniques:", np.unique(y_train))
-    print("Labels test uniques:", np.unique(y_test))
-
-    # Vérifier un alignement image-label
-    plt.imshow(x_test[0].squeeze(), cmap="gray")
-    plt.title(f"Label attendu: {y_test[0]}")
-    plt.show()
-
-    import random
-
-    # Vérifier plusieurs images et leurs labels
-    for _ in range(5):
-        index = random.randint(0, len(x_test) - 1)
-        plt.imshow(x_test[index].squeeze(), cmap="gray")
-        plt.title(f"Label attendu: {y_test[index]}")
+    # Vérifier l’alignement image-label sur quelques exemples
+    for i in range(5):
+        plt.imshow(x_test[i].squeeze(), cmap="gray")
+        plt.title(f"Index: {i} - Label attendu: {labels_mapping[y_test[i]]}")
+        plt.axis("off")
         plt.show()
-
-
+    
     # Charger le modèle sauvegardé
     model = tf.keras.models.load_model("models/emnist_model.h5")
 
     # Évaluation du modèle
-    loss, accuracy = model.evaluate(x_test, y_test)
+    loss, accuracy = model.evaluate(x_test, y_test, verbose=1)
     print(f"Précision sur les données de test : {accuracy * 100:.2f}%")
 
-    # Générer et afficher les matrices de confusion
-    plot_confusion_matrices(model, x_test, y_test)
+    # Générer et afficher la matrice de confusion
+    y_pred = np.argmax(model.predict(x_test), axis=1)
+    cm = tf.math.confusion_matrix(y_test, y_pred, num_classes=47).numpy()
 
-    # Afficher les courbes de perte et précision
-    plot_training_history_emnist(model)
+    plt.figure(figsize=(10, 8))
+    plt.imshow(cm, cmap='Blues', interpolation='nearest')
+    plt.colorbar()
+    plt.xlabel("Prédictions")
+    plt.ylabel("Vérités")
+    plt.title("Matrice de confusion")
+    plt.show()
+
+    # Visualisation des prédictions avec les images et leurs vrais labels
+    for i in range(5):
+        index = random.randint(0, len(x_test) - 1)
+        plt.imshow(x_test[index].squeeze(), cmap="gray")
+        # Utiliser labels_mapping pour afficher les vrais labels et les prédictions sous forme de caractères
+        # On ajuste le mappage pour que les labels minuscules n'aient pas de décalage
+        plt.title(f"Prédiction: {labels_mapping[y_pred[index]]} - Vrai label: {labels_mapping[y_test[index]]}")
+        plt.axis("off")
+        plt.show()
+
+    # Tracer les courbes d'entraînement
+    history = model.history.history
+    loss_values = history["loss"]
+    val_loss_values = history["val_loss"]
+    acc_values = history["accuracy"]
+    val_acc_values = history["val_accuracy"]
+
+    epochs = range(1, len(loss_values) + 1)
+
+    plt.figure(figsize=(12, 5))
+    plt.subplot(1, 2, 1)
+    plt.plot(epochs, loss_values, "bo-", label="Perte entraînement")
+    plt.plot(epochs, val_loss_values, "r*-", label="Perte validation")
+    plt.xlabel("Époques")
+    plt.ylabel("Perte")
+    plt.legend()
+
+    plt.subplot(1, 2, 2)
+    plt.plot(epochs, acc_values, "bo-", label="Précision entraînement")
+    plt.plot(epochs, val_acc_values, "r*-", label="Précision validation")
+    plt.xlabel("Époques")
+    plt.ylabel("Précision")
+    plt.legend()
+
+    plt.show()
+
+# Exécuter l'évaluation
+evaluate2_model()
