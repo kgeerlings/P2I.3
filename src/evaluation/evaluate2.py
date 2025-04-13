@@ -30,7 +30,9 @@ def evaluate2_model():
         plt.show()
     
     # Charger le modèle sauvegardé
-    model = tf.keras.models.load_model("models/emnist_model.h5")
+    "meilleur modèle"
+    model = tf.keras.models.load_model("models/emnist_model_20250413_210913/model.h5")
+    #model = tf.keras.models.load_model("models/emnist_model_20250413_213608/model.h5") 
 
     # Évaluation du modèle
     loss, accuracy = model.evaluate(x_test, y_test, verbose=1)
@@ -83,6 +85,6 @@ def evaluate2_model():
     plt.legend()
 
     plt.show()
-
+    #model = tf.keras.models.load_model("models/emnist_model.h5")
 if __name__ == "__main__":
     evaluate2_model()

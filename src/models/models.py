@@ -17,29 +17,55 @@ from tensorflow.keras import layers, models, regularizers
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import EarlyStopping
 
+from tensorflow.keras import models, layers, regularizers
+from tensorflow.keras.optimizers import Adam
+
+from tensorflow.keras import models, layers, regularizers
+from tensorflow.keras.optimizers import Adam
+
 def build_model_emnist():
-    """Construit et retourne un modèle CNN pour EMNIST avec des ajustements pour améliorer la précision"""
-    model = models.Sequential([
-        # Première couche convolutive avec plus de filtres
-        layers.Conv2D(64, (3, 3), activation='relu', kernel_regularizer=regularizers.l2(0.001), input_shape=(28, 28, 1)),
-        layers.MaxPooling2D((2, 2)),
-        layers.Dropout(0.3),  # il faut augmenter la dropout pour réduire le sur-apprentissage
+    """Construit et retourne un modèle CNN optimisé pour EMNIST Balanced."""
 
-        # Deuxième couche convolutive avec encore plus de filtres et régularisation L1 L2
-        layers.Conv2D(128, (3, 3), activation='relu', kernel_regularizer=regularizers.l1_l2(l1=0.001, l2=0.01)),
-        layers.MaxPooling2D((2, 2)),
-        layers.Dropout(0.3),  # Dropout pour éviter l'overfitting
+    model = models.Sequential()
 
-        # Couches entièrement connectées
-        layers.Flatten(),
-        layers.Dense(256, activation='relu', kernel_regularizer=regularizers.l2(0.001)),
-        layers.Dropout(0.5),  # Dropout plus important pour éviter l'overfitting
-        layers.Dense(47, activation='softmax')  # 47 classes pour EMNIST Balanced
-    ])
-    
-    # Compilation du modèle avec l'optimiseur Adam et un taux d'apprentissage ajusté
-    model.compile(optimizer=Adam(learning_rate=0.0005),  # Taux d'apprentissage plus faible pour une convergence plus stable
-                  loss='sparse_categorical_crossentropy', 
-                  metrics=['accuracy'])
+    # Bloc 1
+    model.add(layers.Conv2D(32, (3, 3), padding='same', input_shape=(28, 28, 1)))
+    model.add(layers.BatchNormalization())
+    model.add(layers.LeakyReLU())
+    model.add(layers.MaxPooling2D((2, 2)))
+    model.add(layers.Dropout(0.25))
+
+    # Bloc 2
+    model.add(layers.Conv2D(64, (3, 3), padding='same', kernel_regularizer=regularizers.l2(0.001)))
+    model.add(layers.BatchNormalization())
+    model.add(layers.LeakyReLU())
+    model.add(layers.MaxPooling2D((2, 2)))
+    model.add(layers.Dropout(0.3))
+
+    # Bloc 3
+    model.add(layers.Conv2D(128, (3, 3), padding='same', kernel_regularizer=regularizers.l2(0.001)))
+    model.add(layers.BatchNormalization())
+    model.add(layers.LeakyReLU())
+    model.add(layers.MaxPooling2D((2, 2)))
+    model.add(layers.Dropout(0.4))
+
+    # Global Average Pooling
+    model.add(layers.GlobalAveragePooling2D())
+
+    # Densely connected layer
+    model.add(layers.Dense(128, kernel_regularizer=regularizers.l2(0.001)))
+    model.add(layers.BatchNormalization())
+    model.add(layers.LeakyReLU())
+    model.add(layers.Dropout(0.5))
+
+    # Sortie
+    model.add(layers.Dense(47, activation='softmax'))  # EMNIST Balanced a 47 classes
+
+    # Compilation
+    model.compile(
+        optimizer=Adam(learning_rate=0.0003),
+        loss='sparse_categorical_crossentropy',
+        metrics=['accuracy']
+    )
 
     return model

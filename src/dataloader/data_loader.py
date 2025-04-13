@@ -4,13 +4,18 @@ import numpy as np
 from tensorflow.keras.utils import to_categorical
 from PIL import Image
 import matplotlib.pyplot as plt
+import tensorflow as tf
+import numpy as np
+
+# Charger le jeu de données MNIST depuis TensorFlow
+(x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
+
+# Sauvegarder les données dans un fichier .npz
+np.savez('data/mnist.npz', x_train=x_train, y_train=y_train, x_test=x_test, y_test=y_test)
+
 
 def load_data():
-    # Charger le dataset MNIST (chiffres)
-    #(x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data(fname="data/mnist.npz") 
-    # marche pas parce que fname peut pas chercher un fichier local
-    
-# charge les données MNIST depuis le fichier local 'data/mnist.npz'
+    # Charger les données MNIST depuis le fichier local 'data/mnist.npz'
     with np.load("data/mnist.npz") as data:
         x_train, y_train = data['x_train'], data['y_train']
         x_test, y_test = data['x_test'], data['y_test']

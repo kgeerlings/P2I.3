@@ -5,7 +5,8 @@ def evaluate_model():
     x_train, x_test, y_train, y_test = load_data()
 
     # Charger le modèle
-    model = tf.keras.models.load_model('../models/mnist_model.h5')
+    model = tf.keras.models.load_model('/Users/kamigeerlings/Documents/P2I.3/models/mnist_model.h5')
+
 
     # Évaluation
     loss, accuracy = model.evaluate(x_test, y_test)
