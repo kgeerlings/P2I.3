@@ -31,7 +31,7 @@ class ImageClassifier(QMainWindow):
         self.label.setAlignment(Qt.AlignCenter)
         
         # Charger le modèle
-        self.model = load_model("/Users/kamigeerlings/Documents/P2I.3/models/emnist_model_20250413_210913/model.h5") 
+        self.model = load_model("/Users/kamigeerlings/Documents/2A/P2I/P2I.3/models/emnist_model_20250413_210913/model.h5") 
 
         # Charger les labels
         self.labels_mapping = self.load_emnist_labels("data/gzip/emnist-balanced-mapping.txt")
