@@ -57,3 +57,5 @@ def plot_training_history_emnist(history):
     plt.tight_layout()
     plt.savefig('models/emnist_matrix/training_history_emnist.png')
     plt.show()
+
+    

@@ -5,6 +5,7 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.image import img_to_array
+from tensorflow.keras import backend as K
 from PIL import Image
 
 class ImageClassifier(QMainWindow):
@@ -26,58 +27,62 @@ class ImageClassifier(QMainWindow):
         
         # Label de prédiction
         self.label = QLabel("Prédiction : ", self)
-        self.label.setGeometry(50, 320, 300, 40)
+        self.label.setGeometry(50, 320, 400, 40)
         self.label.setAlignment(Qt.AlignCenter)
         
-        # Charger le modèle de deep learning
-        self.model = load_model("/Users/kamigeerlings/Documents/P2I.3/models/emnist_model.h5")
+        # Charger le modèle
+        self.model = load_model("/Users/kamigeerlings/Documents/P2I.3/models/emnist_model_20250413_210913/model.h5") 
 
-        # Mapping des labels EMNIST Balanced
-        self.labels_mapping = [
-            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',  # Chiffres
-            'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',  # Lettres majuscules
-            'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v'  # Lettres minuscules
-        ]
+        # Charger les labels
+        self.labels_mapping = self.load_emnist_labels("data/gzip/emnist-balanced-mapping.txt")
+
+    def load_emnist_labels(self, mapping_path):
+        labels = []
+        try:
+            with open(mapping_path, 'r') as f:
+                for line in f:
+                    _, unicode_val = line.strip().split()
+                    labels.append(chr(int(unicode_val)))
+        except Exception as e:
+            print(f"Erreur lors du chargement des labels EMNIST : {e}")
+        return labels
 
     def load_image(self):
-        # Ouvrir la boîte de dialogue pour choisir un fichier image
         file_path, _ = QFileDialog.getOpenFileName(self, "Ouvrir une image", "", "Images (*.png *.jpg *.jpeg)")
         if file_path:
-            print(f"Image chargée : {file_path}")
-            # Afficher l'image dans la zone de prévisualisation
+            print(f"\nImage chargée : {file_path}")
             pixmap = QPixmap(file_path)
             pixmap = pixmap.scaled(200, 200, Qt.KeepAspectRatio)
-            self.scene.clear()  # Effacer la scène précédente avant d'ajouter la nouvelle image
+            self.scene.clear()
             item = QGraphicsPixmapItem(pixmap)
             self.scene.addItem(item)
-            # Prédire la classe de l'image chargée
             self.predict_image(file_path)
 
     def predict_image(self, file_path):
         try:
-            # Charger l'image et la prétraiter
-            image = Image.open(file_path).convert("L").resize((28, 28))  # Conversion en niveaux de gris (MNIST-like)
-            
-            # Vérification visuelle de l'image avant traitement
-            image.show()  # Cela ouvrira l'image pour vérifier si elle est correcte
+            print(f"--- Prédiction en cours pour : {file_path} ---")
 
-            image = img_to_array(image) / 255.0  # Normalisation
-            image = np.expand_dims(image, axis=0)  # Ajouter la dimension du batch
+            # Nettoyage de session (important si bug de prédiction identique)
+            K.clear_session()
 
-            print(f"Image prétraitée et prête pour la prédiction : {image.shape}")
+            # Traitement image
+            image = Image.open(file_path).convert("L").resize((28, 28))
+            image = image.transpose(Image.ROTATE_270).transpose(Image.FLIP_LEFT_RIGHT)
 
-            # Effectuer la prédiction
-            prediction = self.model.predict(image)
-            print(f"Sortie brute du modèle : {prediction}")
+            image_array = img_to_array(image) / 255.0
+            image_array = np.expand_dims(image_array, axis=-1)
+            image_array = np.expand_dims(image_array, axis=0)
 
-            # Trouver l'indice du label prédit
-            predicted_label_index = np.argmax(prediction, axis=1)[0]  # Classe prédite (avec la plus grande probabilité)
-            print(f"Indice de la prédiction : {predicted_label_index}")
-            
-            # Utiliser le labels_mapping pour afficher la prédiction sous forme de caractère
-            predicted_label = self.labels_mapping[predicted_label_index]
+            print("Pixels [ligne 0] :", image_array[0, 0])
 
-            # Mettre à jour le label de prédiction pour afficher la nouvelle prédiction
+            # Prédiction
+            prediction = self.model.predict(image_array)
+            predicted_index = np.argmax(prediction[0])
+            predicted_label = self.labels_mapping[predicted_index]
+
+            print(f"Prédiction brute : {prediction}")
+            print(f"Indice : {predicted_index} → Caractère : {predicted_label}")
+
             self.label.setText(f"Prédiction : {predicted_label}")
         except Exception as e:
             print(f"Erreur lors de la prédiction : {e}")

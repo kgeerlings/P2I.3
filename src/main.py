@@ -31,6 +31,12 @@ if __name__ == '__main__':
     elif choice == '4':
         evaluate_model()
     elif choice == '5':
-        ImageClassifier()
+        from PyQt5.QtWidgets import QApplication
+        import sys
+
+        app = QApplication(sys.argv)
+        window = ImageClassifier()
+        window.show()
+        sys.exit(app.exec_())
     else:
         print("Option invalide.")

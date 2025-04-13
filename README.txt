@@ -20,3 +20,5 @@ Ce projet implémente un réseau de neurones capable d'identifier des lettres et
    brew install python3.10
    brew install pyqt
    python3.10 -m pip install -r requirements.txt
+3. Executer le code: 
+   python3.10 src/main.py
