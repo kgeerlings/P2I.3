@@ -1,9 +1,9 @@
 import os
 import matplotlib.pyplot as plt
-from data_loader import load_data_emnist
-from models import build_model_emnist
-from matrix import plot_confusion_matrices
-from training_history import plot_training_history_emnist
+from dataloader.data_loader import load_data_emnist
+from models.models import build_model_emnist
+from utils.matrix import plot_confusion_matrices
+from utils.training_history import plot_training_history_emnist
 import random
 
 def train2_model():
@@ -27,3 +27,6 @@ def train2_model():
     # Affichage et sauvegarde des résultats
     plot_confusion_matrices(model, x_test, y_test)
     plot_training_history_emnist(history)
+
+if __name__ == '__main__':  
+    train2_model()

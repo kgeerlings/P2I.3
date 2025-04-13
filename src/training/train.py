@@ -1,7 +1,7 @@
-from data_loader import load_data
-from models import build_model
-from matrix import plot_confusion_matrix_mnist
-from training_history import plot_training_history_mnist
+from dataloader.data_loader import load_data
+from models.models import build_model
+from utils.matrix import plot_confusion_matrix_mnist
+from utils.training_history import plot_training_history_mnist
 
 
 
@@ -31,3 +31,5 @@ def train_model():
     # Évaluation du modèle et affichage de la matrice de confusion
     plot_confusion_matrix_mnist(model, x_test, y_test)
 
+if __name__ == '__main__':
+    train_model()

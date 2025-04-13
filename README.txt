@@ -12,5 +12,7 @@ Ce projet implémente un réseau de neurones capable d'identifier des lettres et
 ## Installation
 1. Clonez le dépôt.
 2. Installez les dépendances :
-   ```bash
+   brew install python3.10
    pip3 install -r requirements.txt
+   brew install pyqt
+   python3.10 -m pip install -r requirements.txt

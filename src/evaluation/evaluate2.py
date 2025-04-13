@@ -3,7 +3,7 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 import random
 
-from data_loader import load_data_emnist
+from dataloader.data_loader import load_data_emnist
 
 def evaluate2_model():
     """Évalue le modèle et affiche les résultats"""
@@ -84,5 +84,5 @@ def evaluate2_model():
 
     plt.show()
 
-# Exécuter l'évaluation
-evaluate2_model()
+if __name__ == "__main__":
+    evaluate2_model()

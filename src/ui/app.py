@@ -30,7 +30,7 @@ class ImageClassifier(QMainWindow):
         self.label.setAlignment(Qt.AlignCenter)
         
         # Charger le modèle de deep learning
-        self.model = load_model("/Users/kami/2A/P2I.3/models/emnist_model.h5")
+        self.model = load_model("/Users/kamigeerlings/Documents/P2I.3/models/emnist_model.h5")
 
         # Mapping des labels EMNIST Balanced
         self.labels_mapping = [
