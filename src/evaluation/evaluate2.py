@@ -2,20 +2,26 @@ import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
 import random
-
 from dataloader.data_loader import load_data_emnist
+
+
+def load_emnist_labels(mapping_path):
+    """Charge les labels EMNIST Balanced depuis le fichier de mapping"""
+    labels = []
+    with open(mapping_path, 'r') as f:
+        for line in f:
+            _, unicode_val = line.strip().split()
+            labels.append(chr(int(unicode_val)))
+    return labels
 
 def evaluate2_model():
     """Évalue le modèle et affiche les résultats"""
     # Charger les données
     x_train, x_test, y_train, y_test = load_data_emnist()
 
-    # Mapping des labels EMNIST Balanced
-    labels_mapping = [
-        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',  # Chiffres
-        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',  # Lettres majuscules
-        'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v'  # Lettres minuscules
-    ]
+    # Charger le mapping des labels EMNIST
+    mapping_path = "data/gzip/emnist-balanced-mapping.txt"
+    labels_mapping = load_emnist_labels(mapping_path)
 
     # Vérification des dimensions des données
     print(f"x_train: {x_train.shape}, y_train: {y_train.shape}")
@@ -30,9 +36,7 @@ def evaluate2_model():
         plt.show()
     
     # Charger le modèle sauvegardé
-    "meilleur modèle"
     model = tf.keras.models.load_model("models/emnist_model_20250413_210913/model.h5")
-    #model = tf.keras.models.load_model("models/emnist_model_20250413_213608/model.h5") 
 
     # Évaluation du modèle
     loss, accuracy = model.evaluate(x_test, y_test, verbose=1)
@@ -55,7 +59,6 @@ def evaluate2_model():
         index = random.randint(0, len(x_test) - 1)
         plt.imshow(x_test[index].squeeze(), cmap="gray")
         # Utiliser labels_mapping pour afficher les vrais labels et les prédictions sous forme de caractères
-        # On ajuste le mappage pour que les labels minuscules n'aient pas de décalage
         plt.title(f"Prédiction: {labels_mapping[y_pred[index]]} - Vrai label: {labels_mapping[y_test[index]]}")
         plt.axis("off")
         plt.show()
@@ -85,6 +88,6 @@ def evaluate2_model():
     plt.legend()
 
     plt.show()
-    #model = tf.keras.models.load_model("models/emnist_model.h5")
+
 if __name__ == "__main__":
     evaluate2_model()
