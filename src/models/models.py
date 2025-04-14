@@ -1,27 +1,21 @@
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Flatten
 from tensorflow import keras
-from tensorflow.keras import layers
-from tensorflow.keras import regularizers
+from tensorflow.keras import layers, models, regularizers
+from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.callbacks import EarlyStopping
+from tensorflow.keras.models import load_model
 
 def build_model():
     # Créer un modèle séquentiel
     model = Sequential([
         Flatten(input_shape=(28, 28)),  # Remplace cette taille par celle de tes images
         Dense(128, activation='relu'),  # Couche cachée
-        Dense(10, activation='softmax')  # Couche de sortie pour 10 classes (par exemple, MNIST)
+        Dense(10, activation='softmax')  # Couche de sortie pour 10 classes 
     ])
     return model
 
-from tensorflow.keras import layers, models, regularizers
-from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.callbacks import EarlyStopping
 
-from tensorflow.keras import models, layers, regularizers
-from tensorflow.keras.optimizers import Adam
-
-from tensorflow.keras import models, layers, regularizers
-from tensorflow.keras.optimizers import Adam
 
 def build_model_emnist():
     """Construit et retourne un modèle CNN optimisé pour EMNIST Balanced."""

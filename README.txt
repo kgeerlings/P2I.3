@@ -4,8 +4,8 @@ Ce projet implémente un réseau de neurones capable d'identifier des lettres et
 
 ## Structure du projet
 - `data/`: Contient les datasets bruts et pré-traités. 
-   C'est un dossier à créer vous-mëme car les taille des dataset est trop importante  
-   pour les mettre sur Github. Voici les liens direct pour les installations de dataset:
+   C'est un dossier à créer vous-même car les tailles des datasets est trop importante  
+   pour les mettre sur Github. Voici les liens directs pour les installations de dataset:
 
    EMNIST: https://biometrics.nist.gov/cs_links/EMNIST/gzip.zip
 
